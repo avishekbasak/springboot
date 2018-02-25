@@ -50,8 +50,8 @@ public class UserService {
 //                    user.getUsername(), user.getEmail());
 //        } else {
 
-//            String encryptedPassword = passwordEncoder.encode(user.getPassword());
-//            user.setPassword(encryptedPassword);
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPassword);
 
             Plan plan = new Plan(plansEnum);
             // It makes sure the plans exist in the database
