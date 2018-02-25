@@ -23,7 +23,7 @@ import com.devopsbuddy.enums.RolesEnum;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-public class RepositoryIntegrationTest extends AbstractIntegrationTest {
+public class UserIntegrationTest extends AbstractIntegrationTest {
 
 
 
