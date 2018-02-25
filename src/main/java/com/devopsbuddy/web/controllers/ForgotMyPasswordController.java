@@ -128,20 +128,20 @@ public class ForgotMyPasswordController {
         }
 
         User user = passwordResetToken.getUser();
-//        if (user.getId() != id) {
-//            LOG.error("The user id {} passed as parameter does not match the user id {} associated with the token {}",
-//                    id, user.getId(), token);
-//            model.addAttribute(PASSWORD_RESET_ATTRIBUTE_NAME, "false");
-//            model.addAttribute(MESSAGE_ATTRIBUTE_NAME, i18NService.getMessage("resetPassword.token.invalid", locale));
-//            return CHANGE_PASSWORD_VIEW_NAME;
-//        }
-//
-//        if (LocalDateTime.now(Clock.systemUTC()).isAfter(passwordResetToken.getExpiryDate())) {
-//            LOG.error("The token {} has expired", token);
-//            model.addAttribute(PASSWORD_RESET_ATTRIBUTE_NAME, "false");
-//            model.addAttribute(MESSAGE_ATTRIBUTE_NAME, i18NService.getMessage("resetPassword.token.expired", locale));
-//            return CHANGE_PASSWORD_VIEW_NAME;
-//        }
+        if (user.getId() != id) {
+            LOG.error("The user id {} passed as parameter does not match the user id {} associated with the token {}",
+                    id, user.getId(), token);
+            model.addAttribute(PASSWORD_RESET_ATTRIBUTE_NAME, "false");
+            model.addAttribute(MESSAGE_ATTRIBUTE_NAME, i18NService.getMessage("resetPassword.token.invalid", locale));
+            return CHANGE_PASSWORD_VIEW_NAME;
+        }
+
+        if (LocalDateTime.now(Clock.systemUTC()).isAfter(passwordResetToken.getExpiryDate())) {
+            LOG.error("The token {} has expired", token);
+            model.addAttribute(PASSWORD_RESET_ATTRIBUTE_NAME, "false");
+            model.addAttribute(MESSAGE_ATTRIBUTE_NAME, i18NService.getMessage("resetPassword.token.expired", locale));
+            return CHANGE_PASSWORD_VIEW_NAME;
+        }
 
         model.addAttribute("principalId", user.getId());
 
