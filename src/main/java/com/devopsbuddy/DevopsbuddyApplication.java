@@ -50,9 +50,6 @@ public class DevopsbuddyApplication implements CommandLineRunner{
 		LOG.info("Creating Basic and Pro plans in the database...");
 //		planService.createPlan(PlansEnum.BASIC.getId());
 //		planService.createPlan(PlansEnum.PRO.getId());
-		
-		String username ="prouser";
-		String email ="prouser@devopsbuddy.com";
 
 		User user = UserUtils.createBasicUser(webmasterUsername,webmasterEmail);
 		user.setPassword(webmasterPassword);
