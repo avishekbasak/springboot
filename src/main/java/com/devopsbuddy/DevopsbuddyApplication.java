@@ -2,6 +2,7 @@ package com.devopsbuddy;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,15 +31,15 @@ public class DevopsbuddyApplication implements CommandLineRunner{
 
 //	@Autowired
 //	private PlanService planService;
-//
-//	@Value("${webmaster.username}")
-//	private String webmasterUsername;
-//
-//	@Value("${webmaster.password}")
-//	private String webmasterPassword;
-//
-//	@Value("${webmaster.email}")
-//	private String webmasterEmail;
+
+	@Value("${webmaster.username}")
+	private String webmasterUsername;
+
+	@Value("${webmaster.password}")
+	private String webmasterPassword;
+
+	@Value("${webmaster.email}")
+	private String webmasterEmail;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DevopsbuddyApplication.class, args);
@@ -53,8 +54,8 @@ public class DevopsbuddyApplication implements CommandLineRunner{
 		String username ="prouser";
 		String email ="prouser@devopsbuddy.com";
 
-		User user = UserUtils.createBasicUser(username,email);
-		//user.setPassword(webmasterPassword);
+		User user = UserUtils.createBasicUser(webmasterUsername,webmasterEmail);
+		user.setPassword(webmasterPassword);
 		Set<UserRole> userRoles = new HashSet<>();
 		userRoles.add(new UserRole(user, new Role(RolesEnum.ADMIN)));
 		LOG.debug("Creating user with username {}", user.getUsername());
