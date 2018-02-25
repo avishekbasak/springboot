@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.devopsbuddy.backend.service.UserSecurityService;
+
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +24,8 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    private UserSecurityService userSecurityService;
+    @Autowired
+    private UserSecurityService userSecurityService;
 
     @Autowired
     private Environment env;
@@ -74,9 +76,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
-//                .userDetailsService(userSecurityService)
+        auth
+                .userDetailsService(userSecurityService);
 //                .passwordEncoder(passwordEncoder());
-    		auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
+    		
     }
 }

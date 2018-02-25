@@ -2,6 +2,7 @@ package com.devopsbuddy;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -21,8 +22,7 @@ import org.slf4j.Logger;
 
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages="com.devopsbuddy.backend.persistence.repositories")
-public class DevopsbuddyApplication {
+public class DevopsbuddyApplication implements CommandLineRunner{
 
 	private static final Logger LOG = LoggerFactory.getLogger(DevopsbuddyApplication.class);
 	@Autowired
@@ -50,7 +50,7 @@ public class DevopsbuddyApplication {
 //		planService.createPlan(PlansEnum.BASIC.getId());
 //		planService.createPlan(PlansEnum.PRO.getId());
 
-		User user = UserUtils.createBasicUser("a","a");
+		User user = UserUtils.createBasicUser("basicuser","secret@gmail.com");
 		//user.setPassword(webmasterPassword);
 		Set<UserRole> userRoles = new HashSet<>();
 		userRoles.add(new UserRole(user, new Role(RolesEnum.ADMIN)));
