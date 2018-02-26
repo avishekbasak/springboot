@@ -6,9 +6,11 @@ import com.devopsbuddy.backend.persistence.domain.backend.User;
 import com.devopsbuddy.backend.persistence.domain.backend.UserRole;
 import com.devopsbuddy.backend.service.PlanService;
 import com.devopsbuddy.backend.service.S3Service;
+import com.devopsbuddy.backend.service.StripeService;
 import com.devopsbuddy.backend.service.UserService;
 import com.devopsbuddy.enums.PlansEnum;
 import com.devopsbuddy.enums.RolesEnum;
+import com.devopsbuddy.utils.StripeUtils;
 import com.devopsbuddy.utils.UserUtils;
 import com.devopsbuddy.web.domain.frontend.BasicAccountPayload;
 import com.devopsbuddy.web.domain.frontend.ProAccountPayload;
@@ -31,8 +33,10 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -47,9 +51,9 @@ public class    SignupController {
 
     @Autowired
     private S3Service s3Service;
-//
-//    @Autowired
-//    private StripeService stripeService;
+
+    @Autowired
+    private StripeService stripeService;
 
     /** The application logger */
     private static final Logger LOG = LoggerFactory.getLogger(SignupController.class);
@@ -157,7 +161,27 @@ public class    SignupController {
             roles.add(new UserRole(user, new Role(RolesEnum.PRO)));
 
             // Extra precaution in case the POST method is invoked programmatically
-           
+            if (StringUtils.isEmpty(payload.getCardCode()) ||
+                    StringUtils.isEmpty(payload.getCardNumber()) ||
+                    StringUtils.isEmpty(payload.getCardMonth()) ||
+                    StringUtils.isEmpty(payload.getCardYear())) {
+                LOG.error("One or more credit card fields is null or empty. Returning error to the user");
+                model.addAttribute(SIGNED_UP_MESSAGE_KEY, "false");
+                model.addAttribute(ERROR_MESSAGE_KEY, "One of more credit card details is null or empty.");
+                return SUBSCRIPTION_VIEW_NAME;
+
+            }
+            Map<String, Object> stripeTokenParams = StripeUtils.extractTokenParamsFromSignupPayload(payload);
+
+            Map<String, Object> customerParams = new HashMap<String, Object>();
+            customerParams.put("description", "DevOps Buddy customer. Username: " + payload.getUsername());
+            customerParams.put("email", payload.getEmail());
+            customerParams.put("plan", selectedPlan.getId());
+            LOG.info("Subscribing the customer to plan {}", selectedPlan.getName());
+            String stripeCustomerId = stripeService.createCustomer(stripeTokenParams, customerParams);
+            LOG.info("Username: {} has been subscribed to Stripe", payload.getUsername());
+
+            user.setStripeCustomerId(stripeCustomerId);
 
             registeredUser = userService.createUser(user, PlansEnum.PRO, roles);
             LOG.debug(payload.toString());
@@ -175,7 +199,19 @@ public class    SignupController {
 
         return SUBSCRIPTION_VIEW_NAME;
     }
-
+    
+//    @ExceptionHandler({StripeException.class, S3Exception.class})
+//    public ModelAndView signupException(HttpServletRequest request, Exception exception) {
+//
+//        LOG.error("Request {} raised exception {}", request.getRequestURL(), exception);
+//
+//        ModelAndView mav = new ModelAndView();
+//        mav.addObject("exception", exception);
+//        mav.addObject("url", request.getRequestURL());
+//        mav.addObject("timestamp", LocalDate.now(Clock.systemUTC()));
+//        mav.setViewName(GENERIC_ERROR_VIEW_NAME);
+//        return mav;
+//    }
 
 
     //--------------> Private methods

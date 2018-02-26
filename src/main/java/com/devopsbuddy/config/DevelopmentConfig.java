@@ -16,8 +16,8 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("file:///${user.home}/.devopsbuddy/application-dev.properties")
 public class DevelopmentConfig {
 
-//    @Value("${stripe.test.private.key}")
-//    private String stripeDevKey;
+    @Value("${stripe.test.private.key}")
+    private String stripeDevKey;
 
     @Bean
     public EmailService emailService() {
@@ -31,8 +31,8 @@ public class DevelopmentConfig {
         return bean;
     }
 
-//    @Bean
-//    public String stripeKey() {
-//        return stripeDevKey;
-//    }
+    @Bean
+    public String stripeKey() {
+        return stripeDevKey;
+    }
 }
