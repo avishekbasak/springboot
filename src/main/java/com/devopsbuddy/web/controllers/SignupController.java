@@ -5,7 +5,7 @@ import com.devopsbuddy.backend.persistence.domain.backend.Role;
 import com.devopsbuddy.backend.persistence.domain.backend.User;
 import com.devopsbuddy.backend.persistence.domain.backend.UserRole;
 import com.devopsbuddy.backend.service.PlanService;
-
+import com.devopsbuddy.backend.service.S3Service;
 import com.devopsbuddy.backend.service.UserService;
 import com.devopsbuddy.enums.PlansEnum;
 import com.devopsbuddy.enums.RolesEnum;
@@ -45,8 +45,8 @@ public class    SignupController {
     @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private S3Service s3Service;
+    @Autowired
+    private S3Service s3Service;
 //
 //    @Autowired
 //    private StripeService stripeService;
@@ -124,7 +124,16 @@ public class    SignupController {
         User user = UserUtils.fromWebUserToDomainUser(payload);
 
         // Stores the profile image on Amazon S3 and stores the URL in the user's record
-        
+        if (file != null && !file.isEmpty()) {
+           String profileImageUrl = s3Service.storeProfileImage(file, payload.getUsername());
+            if (profileImageUrl != null) {
+                user.setProfileImageUrl(profileImageUrl);
+            } else {
+                LOG.warn("There was a problem uploading the profile image to S3. The user's profile will" +
+                        " be created without the image");
+            }
+
+        }
 
         // Sets the Plan and the Roles (depending on the chosen plan)
         LOG.debug("Retrieving plan from the database");
